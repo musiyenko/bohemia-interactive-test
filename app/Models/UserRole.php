@@ -30,7 +30,7 @@ class UserRole extends Model
      */
     public function isUser(): bool
     {
-        return $this->role == UserRoleEnum::USER;
+        return $this->role === UserRoleEnum::USER;
     }
 
     /**
@@ -38,7 +38,7 @@ class UserRole extends Model
      */
     public function isModerator(): bool
     {
-        return $this->role == UserRoleEnum::MODERATOR;
+        return $this->role === UserRoleEnum::MODERATOR;
     }
 
     /**
@@ -46,6 +46,6 @@ class UserRole extends Model
      */
     public function isAdmin(): bool
     {
-        return $this->role == UserRoleEnum::ADMIN;
+        return $this->role === UserRoleEnum::ADMIN;
     }
 }
