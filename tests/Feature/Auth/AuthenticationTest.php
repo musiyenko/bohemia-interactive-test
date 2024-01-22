@@ -52,4 +52,36 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_users_can_authenticate_via_api(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/api/authenticate', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'status',
+            'token',
+        ]);
+
+        $this->assertDatabaseHas('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+        ]);
+
+        $response = $this->post('/api/authenticate', [
+            'email' => $user->email,
+            'password' => 'invalid_password',
+        ]);
+
+        $response->assertStatus(401);
+
+        $response->assertJsonStructure([
+            'status',
+            'message',
+        ]);
+    }
 }
