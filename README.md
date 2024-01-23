@@ -28,13 +28,16 @@ docker run --rm \
 ```bash
 ./vendor/bin/sail artisan migrate:fresh --seed
 ```
+Bear in mind that the seeder will create 50000 users, 1000 posts and 50000 comments, so it takes a while to complete.
+If you want to speed up this process, you can adjust the seeder parameters in the `database/seeders/UserSeeder.php` 
+and `database/seeders/BlogPostSeeder.php` files.
 
-5. Generate the app key
+1. Generate the app key
 ```bash
 ./vendor/bin/sail artisan key:generate
 ```
 
-6. Consult the documentation by visiting http://localhost/api/documentation in your browser
+1. Consult the documentation by visiting http://localhost/api/documentation in your browser
    
 
 ![Swagger UI](swagger_docs.jpg)
