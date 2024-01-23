@@ -15,7 +15,7 @@ class BlogCommentController extends Controller
      */
     public function __construct()
     {
-        $this->authorizeResource(BlogComment::class, 'blogComment');
+        $this->authorizeResource(BlogComment::class, ['blogComment', 'blogPost']);
     }
 
     /**
@@ -86,7 +86,7 @@ class BlogCommentController extends Controller
      */
     public function restore(BlogPost $blogPost, BlogComment $blogComment): BlogPostResource
     {
-        $this->authorize('restore', $blogComment);
+        $this->authorize('restore', [$blogComment, $blogPost]);
 
         $blogComment->restore();
 
@@ -100,7 +100,7 @@ class BlogCommentController extends Controller
      */
     public function forceDelete(BlogPost $blogPost, BlogComment $blogComment)
     {
-        $this->authorize('forceDelete', $blogComment);
+        $this->authorize('forceDelete', [$blogComment, $blogPost]);
 
         $blogComment->forceDelete();
 
