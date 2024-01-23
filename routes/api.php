@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\ApiAuthController;
+use App\Http\Controllers\BlogCommentController;
 use App\Http\Controllers\BlogPostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,13 @@ Route::middleware('auth:sanctum')->group(function () {
     ]);
     Route::post('/blog/{blogPost}/restore', [BlogPostController::class, 'restore'])->withTrashed()->name('blog.restore');
     Route::delete('/blog/{blogPost}/force-delete', [BlogPostController::class, 'forceDelete'])->withTrashed()->name('blog.force-delete');
+
+    Route::apiResource('/blog/{blogPost}/comments', BlogCommentController::class)->only(['store', 'destroy'])->parameters([
+        'comments' => 'blogComment',
+    ]);
+
+    Route::post('/blog/{blogPost}/comments/{blogComment}/restore', [BlogCommentController::class, 'restore'])->withTrashed()->name('blog.comments.restore');
+    Route::delete('/blog/{blogPost}/comments/{blogComment}/force-delete', [BlogCommentController::class, 'forceDelete'])->withTrashed()->name('blog.comments.force-delete');
 });
 
 Route::controller(BlogPostController::class)->group(function () {

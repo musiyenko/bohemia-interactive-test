@@ -25,7 +25,7 @@ class BlogPostController extends Controller
      */
     public function index(Request $request)
     {
-        $blogPosts = BlogPost::paginate(10);
+        $blogPosts = BlogPost::withCount('comments')->orderBy('comments_count', 'desc')->paginate(10);
 
         if ($request->expectsJson()) {
             return BlogPostResource::collection($blogPosts);
@@ -91,7 +91,7 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Restores a soft deleted BlogPost.
+     * Restore a soft deleted BlogPost.
      *
      * @param  string  $slug
      * @return void
@@ -106,7 +106,7 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Force deletes a BlogPost.
+     * Force delete a BlogPost.
      *
      * @param  string  $slug
      * @return void

@@ -19,7 +19,7 @@ class BlogPostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(),
+            'title' => $this->faker->realTextBetween(10, 64),
             'user_id' => User::whereHas('role', function ($query) {
                 $query->where('role', UserRoleEnum::MODERATOR);
             })->first()->id,

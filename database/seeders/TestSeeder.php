@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
 class TestSeeder extends Seeder
 {
     /**
-     * Run the database seeds, uses a small amount of entries to run tests faster
+     * Run the database seeds, use a small amount of entries to run tests faster
      */
     public function run(): void
     {
@@ -30,6 +30,9 @@ class TestSeeder extends Seeder
 
         BlogPost::factory()
             ->count(100)
+            ->hasComments(
+                5
+            )
             ->create();
     }
 }

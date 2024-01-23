@@ -20,6 +20,8 @@ class BlogPostResource extends JsonResource
             'date' => $this->date,
             'slug' => $this->slug,
             'description' => $this->description,
+            'total_comments' => $this->comments->count(),
+            'comments' => BlogCommentResource::collection($this->comments),
         ];
     }
 }
