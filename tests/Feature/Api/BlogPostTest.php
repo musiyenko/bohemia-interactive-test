@@ -279,6 +279,42 @@ class BlogPostTest extends TestCase
         $response->assertUnauthorized();
     }
 
+    public function test_admins_can_update_blog_posts_without_changing_slug(): void
+    {
+        $admin = User::whereHas('role', function ($query) {
+            $query->where('role', UserRoleEnum::ADMIN);
+        })->first();
+
+        $blogPost = BlogPost::first();
+
+        $response = $this->actingAs($admin)->putJson("/api/blog/{$blogPost->slug}", [
+            'title' => 'Test Title',
+            'date' => '2021-01-01',
+            'description' => 'Test Description',
+        ]);
+
+        $response->assertJsonStructure([
+            'data' => [
+                'title',
+                'author',
+                'date',
+                'slug',
+                'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                        'comment_id',
+                    ],
+                ],
+            ],
+        ]);
+
+        $response->assertOk();
+    }
+
     public function test_admins_can_delete_blog_posts(): void
     {
         $admin = User::whereHas('role', function ($query) {

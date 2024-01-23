@@ -310,7 +310,7 @@ paths:
         - name: "slug"
           in: "formData"
           description: "New slug"
-          required: true
+          required: false
           type: "string"
           default: "dayz-1-24-is-out"
       responses:

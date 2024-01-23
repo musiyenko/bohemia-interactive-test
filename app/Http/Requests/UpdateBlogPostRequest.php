@@ -25,7 +25,7 @@ class UpdateBlogPostRequest extends FormRequest
             'title' => ['required', 'string', 'max:64'],
             'date' => ['required', 'date'],
             'description' => ['required', 'string', 'max:4096'],
-            'slug' => ['required', 'string', 'max:255', 'unique:blog_posts,slug,'.$this->route('blogPost')->id.',id'],
+            'slug' => ['sometimes', 'string', 'max:255', 'unique:blog_posts,slug,'.$this->route('blogPost')->id.',id'],
         ];
     }
 }
