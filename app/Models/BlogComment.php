@@ -7,16 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class BlogPost extends Model
+class BlogComment extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'title',
+        'comment',
         'user_id',
-        'date',
-        'description',
-        'slug',
+        'blog_post_id',
     ];
 
     protected $hidden = [
@@ -26,26 +24,18 @@ class BlogPost extends Model
     ];
 
     /**
-     * Get the route key for the model.
+     * Get the blog post that owns the comment.
      */
-    public function getRouteKeyName(): string
+    public function blogPost()
     {
-        return 'slug';
+        return $this->belongsTo(BlogPost::class, 'blog_post_id');
     }
 
     /**
-     * Get the author that owns the blog post.
+     * Get the user that owns the comment.
      */
-    public function author()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * Get the comments for the blog post.
-     */
-    public function comments()
-    {
-        return $this->hasMany(BlogComment::class);
     }
 }

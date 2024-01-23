@@ -14,6 +14,9 @@ class BlogPostSeeder extends Seeder
     {
         BlogPost::factory()
             ->count(1000)
+            ->hasComments(
+                10
+            )
             ->create();
     }
 }

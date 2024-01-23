@@ -25,6 +25,14 @@ class BlogPostTest extends TestCase
                     'author',
                     'date',
                     'slug',
+                    'total_comments',
+                    'comments' => [
+                        '*' => [
+                            'author',
+                            'date',
+                            'comment',
+                        ],
+                    ],
                 ],
             ],
         ]);
@@ -47,6 +55,14 @@ class BlogPostTest extends TestCase
                 'date',
                 'slug',
                 'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                    ],
+                ],
             ],
         ]);
 
@@ -73,6 +89,14 @@ class BlogPostTest extends TestCase
                 'date',
                 'slug',
                 'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                    ],
+                ],
             ],
         ]);
 
@@ -99,6 +123,14 @@ class BlogPostTest extends TestCase
                 'date',
                 'slug',
                 'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                    ],
+                ],
             ],
         ]);
 
@@ -157,6 +189,14 @@ class BlogPostTest extends TestCase
                 'date',
                 'slug',
                 'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                    ],
+                ],
             ],
         ]);
 
@@ -185,6 +225,14 @@ class BlogPostTest extends TestCase
                 'date',
                 'slug',
                 'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                    ],
+                ],
             ],
         ]);
 
@@ -236,6 +284,10 @@ class BlogPostTest extends TestCase
         $response = $this->actingAs($admin)->deleteJson("/api/blog/{$blogPost->slug}");
 
         $response->assertNoContent();
+
+        $this->assertSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_moderators_can_not_delete_blog_posts(): void
@@ -249,6 +301,10 @@ class BlogPostTest extends TestCase
         $response = $this->actingAs($moderator)->deleteJson("/api/blog/{$blogPost->slug}");
 
         $response->assertForbidden();
+
+        $this->assertNotSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_regular_users_can_not_delete_blog_posts(): void
@@ -262,6 +318,10 @@ class BlogPostTest extends TestCase
         $response = $this->actingAs($user)->deleteJson("/api/blog/{$blogPost->slug}");
 
         $response->assertForbidden();
+
+        $this->assertNotSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_guests_can_not_delete_blog_posts(): void
@@ -273,6 +333,10 @@ class BlogPostTest extends TestCase
         $response = $this->deleteJson("/api/blog/{$blogPost->slug}");
 
         $response->assertUnauthorized();
+
+        $this->assertNotSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_admins_can_restore_blog_posts(): void
@@ -296,7 +360,19 @@ class BlogPostTest extends TestCase
                 'date',
                 'slug',
                 'description',
+                'total_comments',
+                'comments' => [
+                    '*' => [
+                        'author',
+                        'date',
+                        'comment',
+                    ],
+                ],
             ],
+        ]);
+
+        $this->assertNotSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
         ]);
     }
 
@@ -313,6 +389,10 @@ class BlogPostTest extends TestCase
         $response = $this->actingAs($moderator)->postJson("/api/blog/{$blogPost->slug}/restore");
 
         $response->assertForbidden();
+
+        $this->assertSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_regular_users_can_not_restore_blog_posts(): void
@@ -328,6 +408,10 @@ class BlogPostTest extends TestCase
         $response = $this->actingAs($user)->postJson("/api/blog/{$blogPost->slug}/restore");
 
         $response->assertForbidden();
+
+        $this->assertSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_guests_can_not_restore_blog_posts(): void
@@ -341,6 +425,10 @@ class BlogPostTest extends TestCase
         $response = $this->postJson("/api/blog/{$blogPost->slug}/restore");
 
         $response->assertUnauthorized();
+
+        $this->assertSoftDeleted('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_admins_can_force_delete_blog_posts(): void
@@ -356,6 +444,10 @@ class BlogPostTest extends TestCase
         $response = $this->actingAs($admin)->deleteJson("/api/blog/{$blogPost->slug}/force-delete");
 
         $response->assertNoContent();
+
+        $this->assertDatabaseMissing('blog_posts', [
+            'id' => $blogPost->id,
+        ]);
     }
 
     public function test_moderators_can_not_force_delete_blog_posts(): void
