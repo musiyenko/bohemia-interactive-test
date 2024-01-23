@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
         // This is a better approach as the one below ( count(50000) ) batches all the 50000 users in one query,
         // resulting in duplicate generated usernames, as the username verification is based on existing records.
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 50000; $i++) {
             User::factory()->create();
         }
 

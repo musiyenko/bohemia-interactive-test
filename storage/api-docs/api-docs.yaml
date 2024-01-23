@@ -8,7 +8,8 @@ info:
     <strong>ADMIN USER CREDENTIALS: admin@dayz.com / password \n
     MODERATOR USER CREDENTIALS: mod@dayz.com / password \n
     USER CREDENTIALS: user@dayz.com / password</strong> \n\n
-    Registration page: <a href='/register' target='_blank'>Click here (opens in a new tab)</a> \n"
+    Registration page: <a href='/register' target='_blank'>Click here (opens in a new tab)</a> \n\n
+    <u>**Don't forget to check out the <a href='/404' target='_blank'>404 page ;)</a>**</u>" 
   contact:
     name: "Sergey Musiyenko"
     url: "https://sy.mk"
@@ -88,26 +89,8 @@ paths:
           schema:
             type: "object"
             properties:
-              status:
-                type: "string"
-                description: "status"
-                example: "OK"
               data:
-                type: "object"
-                description: "User data"
-                properties:
-                  id:
-                    type: "integer"
-                    description: "User ID"
-                    example: 1
-                  name:
-                    type: "string"
-                    description: "User name"
-                    example: "John Doe"
-                  email:
-                    type: "string"
-                    description: "User email"
-                    example: ""
+                $ref: "#/definitions/User"
 
   /api/blog:
     get:
@@ -327,7 +310,7 @@ paths:
         - name: "slug"
           in: "formData"
           description: "New slug"
-          required: true
+          required: false
           type: "string"
           default: "dayz-1-24-is-out"
       responses:
@@ -838,4 +821,64 @@ definitions:
         type: "string"
         description: "Comment ID (uuid)"
         example: "1c4d0d0c-5b7a-4a4e-9f1a-5b1d1d0d0c1c"
+    
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "User ID (uuid)"
+        example: "1c4d0d0c-5b7a-4a4e-9f1a-5b1d1d0d0c1c"
+      name:
+        type: "string"
+        description: "Name"
+        example: "John"
+      surname:
+        type: "string"
+        description: "Surname"
+        example: "Doe"
+      nickname:
+        type: "string"
+        description: "Nickname"
+        example: "doejoe"
+      username:
+        type: "string"
+        description: "Username"
+        example: "doejoe"
+      phone:
+        type: "string"
+        description: "Phone number"
+        example: "+420 123 456 789"
+      email:
+        type: "string"
+        description: "User email"
+        example: "user@dayz.com"
+      email_verified_at:
+        type: "string"
+        description: "Email verification date"
+        example: "2024-01-01 00:00:00"
+      address:
+        type: "string"
+        description: "Address"
+        example: "123 Main Street"
+      city:
+        type: "string"
+        description: "City"
+        example: "Prague"
+      state:
+        type: "string"
+        description: "State"
+        example: "Czech Republic"
+      zip:
+        type: "string"
+        description: "ZIP code"
+        example: "12345"
+      created_at:
+        type: "string"
+        description: "User creation date"
+        example: "2024-01-01 00:00:00"
+      updated_at:
+        type: "string"
+        description: "User update date"
+        example: "2024-01-01 00:00:00"
           

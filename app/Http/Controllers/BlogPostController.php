@@ -68,10 +68,7 @@ class BlogPostController extends Controller
     {
         $validated = $request->validated();
 
-        $blogPost->title = $validated['title'];
-        $blogPost->date = $validated['date'];
-        $blogPost->description = $validated['description'];
-        $blogPost->slug = $validated['slug'];
+        $blogPost->update($validated);
 
         $blogPost->save();
 
