@@ -32,12 +32,18 @@ Bear in mind that the seeder will create 50000 users, 1000 posts and 50000 comme
 If you want to speed up this process, you can adjust the seeder parameters in the `database/seeders/UserSeeder.php` 
 and `database/seeders/BlogPostSeeder.php` files.
 
-1. Generate the app key
+5. Generate the app key
 ```bash
 ./vendor/bin/sail artisan key:generate
 ```
 
-1. Consult the documentation by visiting http://localhost/api/documentation in your browser
+6. Run npm install and npm run dev
+```bash
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
+```
+
+7. Consult the documentation by visiting http://localhost/api/documentation in your browser
    
 
 ![Swagger UI](swagger_docs.jpg)
