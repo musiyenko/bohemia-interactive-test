@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Traits\GeneratesUsername;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+    use GeneratesUsername;
+
     /**
      * The current password being used by the factory.
      */
@@ -23,8 +26,19 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $name = fake()->firstname();
+        $surname = fake()->lastName();
+
         return [
-            'name' => fake()->name(),
+            'name' => $name,
+            'surname' => $surname,
+            'nickname' => fake()->userName(),
+            'phone' => fake()->phoneNumber(),
+            'address' => fake()->streetAddress(),
+            'username' => $this->generateUsername($name, $surname),
+            'city' => fake()->city(),
+            'state' => fake()->state(),
+            'zip' => fake()->postcode(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

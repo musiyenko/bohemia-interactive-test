@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\ApiAuthController;
+use App\Http\Controllers\BlogCommentController;
+use App\Http\Controllers\BlogPostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,25 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/blog', BlogPostController::class)->except(['index', 'show'])->parameters([
+        'blog' => 'blogPost',
+    ]);
+    Route::post('/blog/{blogPost}/restore', [BlogPostController::class, 'restore'])->withTrashed()->name('blog.restore');
+    Route::delete('/blog/{blogPost}/force-delete', [BlogPostController::class, 'forceDelete'])->withTrashed()->name('blog.force-delete');
+
+    Route::apiResource('/blog/{blogPost}/comments', BlogCommentController::class)->only(['store', 'destroy'])->parameters([
+        'comments' => 'blogComment',
+    ]);
+
+    Route::post('/blog/{blogPost}/comments/{blogComment}/restore', [BlogCommentController::class, 'restore'])->withTrashed()->name('blog.comments.restore');
+    Route::delete('/blog/{blogPost}/comments/{blogComment}/force-delete', [BlogCommentController::class, 'forceDelete'])->withTrashed()->name('blog.comments.force-delete');
+});
+
+Route::controller(BlogPostController::class)->group(function () {
+    Route::get('/blog/{blogPost}', 'show')->name('blog.show');
+    Route::get('/blog', 'index')->name('blog.index');
+});
+
+Route::post('/authenticate', [ApiAuthController::class, 'authenticate'])->name('api.authenticate');
