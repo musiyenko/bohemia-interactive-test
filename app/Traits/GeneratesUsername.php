@@ -7,7 +7,7 @@ use App\Models\User;
 trait GeneratesUsername
 {
     /**
-     * Generate a username from the name and surname.
+     * Generate a unique username based on the name and surname.
      */
     public function generateUsername(string $name, string $surname): string
     {

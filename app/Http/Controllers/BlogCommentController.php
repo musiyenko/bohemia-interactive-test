@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateBlogCommentRequest;
 use App\Http\Resources\BlogPostResource;
 use App\Models\BlogComment;
 use App\Models\BlogPost;
+use Illuminate\Http\JsonResponse;
 
 class BlogCommentController extends Controller
 {
@@ -35,9 +36,9 @@ class BlogCommentController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created BlogComment in storage.
      */
-    public function store(StoreBlogCommentRequest $request, BlogPost $blogPost)
+    public function store(StoreBlogCommentRequest $request, BlogPost $blogPost): BlogPostResource
     {
         $blogPost->comments()->create([
             'comment' => $request->comment,
@@ -72,9 +73,9 @@ class BlogCommentController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Soft delete a BlogComment
      */
-    public function destroy(BlogPost $blogPost, BlogComment $blogComment)
+    public function destroy(BlogPost $blogPost, BlogComment $blogComment): JsonResponse
     {
         $blogComment->delete();
 
@@ -82,7 +83,7 @@ class BlogCommentController extends Controller
     }
 
     /**
-     * Restore a soft deleted BlogComment
+     * Restore a BlogComment
      */
     public function restore(BlogPost $blogPost, BlogComment $blogComment): BlogPostResource
     {
@@ -95,10 +96,8 @@ class BlogCommentController extends Controller
 
     /**
      * Force delete a BlogComment
-     *
-     * @return void
      */
-    public function forceDelete(BlogPost $blogPost, BlogComment $blogComment)
+    public function forceDelete(BlogPost $blogPost, BlogComment $blogComment): JsonResponse
     {
         $this->authorize('forceDelete', [$blogComment, $blogPost]);
 
