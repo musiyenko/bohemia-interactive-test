@@ -27,4 +27,19 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /**
+     * Render an exception into an HTTP response.
+     */
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException && request()->expectsJson()) {
+            return response()->json([
+                'status' => 'KO',
+                'message' => 'Resource not found',
+            ], 404);
+        }
+
+        return parent::render($request, $e);
+    }
 }
