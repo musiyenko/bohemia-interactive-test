@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\BlogPost;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\Facades\Validator;
 
 class ExpireBlog extends Command
@@ -49,7 +50,10 @@ class ExpireBlog extends Command
         $this->info('Expired '.$posts->count().' blog posts and '.$posts->sum('comments_count').' comments.');
     }
 
-    private function validateArguments(): \Illuminate\Contracts\Validation\Validator
+    /**
+     * Validate the command arguments
+     */
+    private function validateArguments(): ValidatorContract
     {
         return Validator::make(['hours' => $this->argument('hours')], [
             'hours' => 'integer|min:1',

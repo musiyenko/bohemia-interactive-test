@@ -6,7 +6,9 @@ use App\Http\Requests\StoreBlogPostRequest;
 use App\Http\Requests\UpdateBlogPostRequest;
 use App\Http\Resources\BlogPostResource;
 use App\Models\BlogPost;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BlogPostController extends Controller
 {
@@ -21,23 +23,19 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the BlogPosts
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
         $blogPosts = BlogPost::withCount('comments')->orderBy('comments_count', 'desc')->paginate(10);
 
-        if ($request->expectsJson()) {
-            return BlogPostResource::collection($blogPosts);
-        }
-
-        //
+        return BlogPostResource::collection($blogPosts);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created BlogPost in storage
      */
-    public function store(StoreBlogPostRequest $request)
+    public function store(StoreBlogPostRequest $request): BlogPostResource
     {
         $validated = $request->validated();
 
@@ -56,17 +54,17 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display a specified BlogPost
      */
-    public function show(BlogPost $blogPost)
+    public function show(BlogPost $blogPost): BlogPostResource
     {
         return new BlogPostResource($blogPost);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a blog post
      */
-    public function update(UpdateBlogPostRequest $request, BlogPost $blogPost)
+    public function update(UpdateBlogPostRequest $request, BlogPost $blogPost): BlogPostResource
     {
         $validated = $request->validated();
 
@@ -81,9 +79,9 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Soft delete a BlogPost
      */
-    public function destroy(BlogPost $blogPost)
+    public function destroy(BlogPost $blogPost): JsonResponse
     {
         $blogPost->delete();
 
@@ -91,12 +89,9 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Restore a soft deleted BlogPost.
-     *
-     * @param  string  $slug
-     * @return void
+     * Restore a BlogPost
      */
-    public function restore(BlogPost $blogPost)
+    public function restore(BlogPost $blogPost): BlogPostResource
     {
         $this->authorize('restore', $blogPost);
 
@@ -106,12 +101,9 @@ class BlogPostController extends Controller
     }
 
     /**
-     * Force delete a BlogPost.
-     *
-     * @param  string  $slug
-     * @return void
+     * Force delete a BlogPost
      */
-    public function forceDelete(BlogPost $blogPost)
+    public function forceDelete(BlogPost $blogPost): JsonResponse
     {
         $this->authorize('forceDelete', $blogPost);
 
