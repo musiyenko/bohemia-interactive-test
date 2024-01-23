@@ -54,7 +54,7 @@ class BlogCommentPolicy
      */
     public function restore(User $user, BlogComment $blogComment, BlogPost $blogPost): bool
     {
-        return $user->role->isAdmin();
+        return $user->role->isAdmin() && $blogPost->comments()->withTrashed()->get()->contains($blogComment);
     }
 
     /**
@@ -62,6 +62,6 @@ class BlogCommentPolicy
      */
     public function forceDelete(User $user, BlogComment $blogComment, BlogPost $blogPost): bool
     {
-        return $user->role->isAdmin();
+        return $user->role->isAdmin() && $blogPost->comments()->withTrashed()->get()->contains($blogComment);
     }
 }
