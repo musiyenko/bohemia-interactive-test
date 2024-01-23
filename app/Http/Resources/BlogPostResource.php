@@ -21,7 +21,7 @@ class BlogPostResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'total_comments' => $this->comments->count(),
-            'comments' => BlogCommentResource::collection($this->comments),
+            'comments' => BlogCommentResource::collection($this->comments)->sortByDesc('created_at'),
         ];
     }
 }
