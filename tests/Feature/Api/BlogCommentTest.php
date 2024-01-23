@@ -39,6 +39,7 @@ class BlogCommentTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -78,6 +79,7 @@ class BlogCommentTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -117,6 +119,7 @@ class BlogCommentTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],

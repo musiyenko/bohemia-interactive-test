@@ -31,6 +31,7 @@ class BlogPostTest extends TestCase
                             'author',
                             'date',
                             'comment',
+                            'comment_id'
                         ],
                     ],
                 ],
@@ -61,6 +62,7 @@ class BlogPostTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -95,6 +97,7 @@ class BlogPostTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -129,6 +132,7 @@ class BlogPostTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -195,6 +199,7 @@ class BlogPostTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -231,6 +236,7 @@ class BlogPostTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],
@@ -366,6 +372,7 @@ class BlogPostTest extends TestCase
                         'author',
                         'date',
                         'comment',
+                        'comment_id'
                     ],
                 ],
             ],

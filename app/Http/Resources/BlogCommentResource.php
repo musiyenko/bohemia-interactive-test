@@ -15,9 +15,10 @@ class BlogCommentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'comment' => $this->comment,
-            'author' => $this->user->username,
-            'date' => $this->created_at->format('Y-m-d H:i:s'),
+            'comment'   => $this->comment,
+            'author'    => $this->user->username,
+            'date'      => $this->created_at->format('Y-m-d H:i:s'),
+            'comment_id'        => $this->id,
         ];
     }
 }
