@@ -11,7 +11,7 @@ class UpdateBlogPostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update', $this->blogPost);
     }
 
     /**
@@ -25,7 +25,7 @@ class UpdateBlogPostRequest extends FormRequest
             'title' => ['required', 'string', 'max:64'],
             'date' => ['required', 'date'],
             'description' => ['required', 'string', 'max:4096'],
-            'slug' => ['required', 'string', 'max:255', 'unique:blog_posts,slug,'.$this->route('blog_post')->id.',id'],
+            'slug' => ['required', 'string', 'max:255', 'unique:blog_posts,slug,'.$this->route('blogPost')->id.',id'],
         ];
     }
 }

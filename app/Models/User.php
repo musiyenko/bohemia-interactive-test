@@ -60,6 +60,9 @@ class User extends Authenticatable
         return $this->hasOne(UserRole::class);
     }
 
+    /**
+     * Get the blog posts for the user.
+     */
     public function blogPosts()
     {
         return $this->hasMany(BlogPost::class);

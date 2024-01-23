@@ -12,7 +12,7 @@ class BlogPostPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -20,7 +20,7 @@ class BlogPostPolicy
      */
     public function view(User $user, BlogPost $blogPost): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -28,7 +28,7 @@ class BlogPostPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->role->isAdmin() || $user->role->isModerator();
     }
 
     /**
@@ -36,7 +36,7 @@ class BlogPostPolicy
      */
     public function update(User $user, BlogPost $blogPost): bool
     {
-        //
+        return $user->role->isAdmin() || $user->role->isModerator();
     }
 
     /**
@@ -44,7 +44,7 @@ class BlogPostPolicy
      */
     public function delete(User $user, BlogPost $blogPost): bool
     {
-        //
+        return $user->role->isAdmin();
     }
 
     /**
@@ -52,7 +52,7 @@ class BlogPostPolicy
      */
     public function restore(User $user, BlogPost $blogPost): bool
     {
-        //
+        return $user->role->isAdmin();
     }
 
     /**
@@ -60,6 +60,6 @@ class BlogPostPolicy
      */
     public function forceDelete(User $user, BlogPost $blogPost): bool
     {
-        //
+        return $user->role->isAdmin();
     }
 }
