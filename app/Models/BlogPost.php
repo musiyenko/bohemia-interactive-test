@@ -19,6 +19,23 @@ class BlogPost extends Model
         'slug',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Get the author that owns the blog post.
+     */
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');

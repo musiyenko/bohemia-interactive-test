@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\BlogPost;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBlogPostRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreBlogPostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', BlogPost::class);
     }
 
     /**
