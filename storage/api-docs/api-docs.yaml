@@ -1,0 +1,841 @@
+swagger: "2.0"
+
+info:
+  version: "1.0.0"
+  title: "Bohemia Interactive Blog API documentation"
+  description: "Bohemia Interactive Blog API documentation for the test project. This API is used to manage posts and comments. \n 
+    Click on the lock icon on the top right corner to authorize yourself. \n\n
+    <strong>ADMIN USER CREDENTIALS: admin@dayz.com / password \n
+    MODERATOR USER CREDENTIALS: mod@dayz.com / password \n
+    USER CREDENTIALS: user@dayz.com / password</strong> \n\n
+    Registration page: <a href='/register' target='_blank'>Click here (opens in a new tab)</a> \n"
+  contact:
+    name: "Sergey Musiyenko"
+    url: "https://sy.mk"
+    email: "m@sy.mk"
+
+securityDefinitions:
+  sanctum:
+    type: apiKey
+    name: Authorization
+    in: header
+    bearerFormat: JWT
+    description: "**Steps to authorize**:\n
+    1. Use the /api/authenticate endpoint to get your JWT token.\n
+    2. Use of the the following credentials:\n
+      <strong>ADMIN USER CREDENTIALS: admin@dayz.com / password \n
+      MODERATOR USER CREDENTIALS: mod@dayz.com / password \n
+      USER CREDENTIALS: user@dayz.com / password</strong> \n
+    3. Copy the token from the response and click on the lock icon on the top right corner.\n
+    4. Use **Bearer {token}** as the value for the Authorization header.\n\n
+    <strong>Example:</strong> Bearer 1|IBcE0IgblLRCJVIjcbYIVRGbLGCbITsmziHt4i7Ye7e46b8e"
+
+
+paths:
+  /api/authenticate:
+    post:
+      summary: "Get your JWT token"
+      tags: ["Authentication"]
+      parameters:
+        - name: "email"
+          in: "formData"
+          description: "Your email"
+          required: true
+          type: "string"
+        - name: "password"
+          in: "formData"
+          description: "Your password"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "OK"
+              token:
+                type: "string"
+                description: "JWT token"
+                example: "1|IBcE0IgblLRCJVIjcbYIVRGbLGCbITsmziHt4i7Ye7e46b8e"
+        401:
+          description: "Unauthorized"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Invalid login credentials"
+
+  /api/user:
+    get:
+      summary: "Get the authenticated user"
+      tags: ["Users"]
+      security:
+        - sanctum: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "OK"
+              data:
+                type: "object"
+                description: "User data"
+                properties:
+                  id:
+                    type: "integer"
+                    description: "User ID"
+                    example: 1
+                  name:
+                    type: "string"
+                    description: "User name"
+                    example: "John Doe"
+                  email:
+                    type: "string"
+                    description: "User email"
+                    example: ""
+
+  /api/blog:
+    get:
+      summary: "Get all blog posts"
+      tags: ["BlogPosts"]
+      parameters:
+        - name: "page"
+          in: "query"
+          description: "Page number"
+          required: false
+          type: "integer"
+          default: 1
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "OK"
+              data:
+                type: "array"
+                description: "Posts list"
+                items:
+                  $ref: "#/definitions/BlogPost"
+              meta:
+                type: "object"
+                description: "Pagination meta data"
+                properties:
+                  current_page:
+                    type: "integer"
+                    description: "Current page number"
+                    example: 1
+                  from:
+                    type: "integer"
+                    description: "First item number"
+                    example: 1
+                  last_page:
+                    type: "integer"
+                    description: "Last page number"
+                    example: 1
+                  path:
+                    type: "string"
+                    description: "Current path"
+                    example: "/api/blog"
+                  per_page:
+                    type: "integer"
+                    description: "Items per page"
+                    example: 10
+                  to:
+                    type: "integer"
+                    description: "Last item number"
+                    example: 10
+                  total:
+                    type: "integer"
+                    description: "Total items count"
+                    example: 10
+    post:
+      summary: "Create a new blog post"
+      tags: ["BlogPosts"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "title"
+          in: "formData"
+          description: "Post title"
+          required: true
+          type: "string"
+          max: 64
+          default: "DayZ 1.24 is out!"
+        - name: "date"
+          in: "formData"
+          description: "Publication date"
+          required: true
+          type: "string"
+          default: "2024-01-01"
+        - name: "description"
+          in: "formData"
+          description: "Post description"
+          required: true
+          type: "string"
+          default: "DayZ 1.24 is out! Check out the new features!"
+        - name: "slug"
+          in: "formData"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "OK"
+              data:
+                $ref: "#/definitions/BlogPost"
+        401:
+          description: "Unauthorized"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Invalid login credentials"
+        422:
+          description: "Unprocessable Entity"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "The given data was invalid."
+              errors:
+                type: "object"
+                properties:
+                  title:
+                    type: "array"
+                    description: "Title errors"
+                    items:
+                      type: "string"
+                      example: "The title field is required."
+                  date:
+                    type: "array"
+                    description: "Date errors"
+                    items:
+                      type: "string"
+                      example: "The date field is required."
+                  description:
+                    type: "array"
+                    description: "Description errors"
+                    items:
+                      type: "string"
+                      example: "The description field is required."
+                  slug:
+                    type: "array"
+                    description: "Slug errors"
+                    items:
+                      type: "string"
+                      example: "The slug field is required."
+
+  /api/blog/{slug}:
+    get:
+      summary: "Get a blog post by slug"
+      tags: ["BlogPosts"]
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              data:
+                $ref: "#/definitions/BlogPost"
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+    put:
+      summary: "Update a blog post by slug"
+      tags: ["BlogPosts"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+        - name: "title"
+          in: "formData"
+          description: "Post title"
+          required: true
+          type: "string"
+          max: 64
+          default: "DayZ 1.25 is out!"
+        - name: "date"
+          in: "formData"
+          description: "Publication date"
+          required: true
+          type: "string"
+          default: "2024-01-01"
+        - name: "description"
+          in: "formData"
+          description: "Post description"
+          required: true
+          type: "string"
+          default: "DayZ 1.25 is out! Check out the new features!"
+        - name: "slug"
+          in: "formData"
+          description: "New slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              data:
+                $ref: "#/definitions/BlogPost"
+        401:
+          description: "Unautheticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+
+    delete:
+      summary: "Delete a blog post by slug"
+      tags: ["BlogPosts"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+      responses:
+        204:
+          description: "OK"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+
+  /api/blog/{slug}/restore:
+    post:
+      summary: "Restore a blog post by slug"
+      tags: ["BlogPosts"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              data:
+                $ref: "#/definitions/BlogPost"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+
+  /api/blog/{slug}/force-delete:
+    delete:
+      summary: "Force delete a blog post by slug"
+      tags: ["BlogPosts"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+      responses:
+        204:
+          description: "OK"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+
+  /api/blog/{slug}/comments:
+    post:
+      summary: "Create a new comment for a blog post"
+      tags: ["BlogComments"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+        - name: "comment"
+          in: "formData"
+          description: "Comment text"
+          required: true
+          type: "string"
+          default: "Wow, I'm excited for the new update! The cars are awesome now!"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "OK"
+              data:
+                $ref: "#/definitions/BlogComment"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+
+  /api/blog/{slug}/comments/{id}:
+    delete:
+      summary: "Delete a comment for a blog post"
+      tags: ["BlogComments"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+        - name: "id"
+          in: "path"
+          description: "Comment ID (uuid)"
+          required: true
+          type: "string"
+      responses:
+        204:
+          description: "OK"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+  
+  /api/blog/{slug}/comments/{id}/restore:
+    post:
+      summary: "Restore a comment for a blog post"
+      tags: ["BlogComments"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+        - name: "id"
+          in: "path"
+          description: "Comment ID (uuid)"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "object"
+            properties:
+              data:
+                $ref: "#/definitions/BlogComment"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+    
+  /api/blog/{slug}/comments/{id}/force-delete:
+    delete:
+      summary: "Force delete a comment for a blog post"
+      tags: ["BlogComments"]
+      security:
+        - sanctum: []
+      parameters:
+        - name: "slug"
+          in: "path"
+          description: "Post slug"
+          required: true
+          type: "string"
+          default: "dayz-1-24-is-out"
+        - name: "id"
+          in: "path"
+          description: "Comment ID (uuid)"
+          required: true
+          type: "string"
+      responses:
+        204:
+          description: "OK"
+        401:
+          description: "Unauthenticated"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "status"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Unauthenticated"
+        403:
+          description: "Forbidden"
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Error message"
+                example: "This action is unauthorized."
+        404:
+          description: "Not Found"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "Error message"
+                example: "KO"
+              message:
+                type: "string"
+                description: "Error message"
+                example: "Resource not found"
+
+definitions:
+  BlogPost:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        description: "Post title"
+        max: 64
+        example: "Lorem ipsum dolor sit amet"
+      author:
+        type: "string"
+        description: "Post author"
+        example: "John Doe"
+      date:
+        type: "string"
+        description: "Post publication date"
+        example: "2024-01-01 00:00:00"
+      slug:
+        type: "string"
+        description: "Post slug"
+        example: "lorem-ipsum-dolor-sit-amet"
+      description:
+        type: "string"
+        description: "Post description"
+        example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla euismod, nisl quis tincidunt aliquam, nisl nisl aliquet nisl."
+      total_comments:
+        type: "integer"
+        description: "Total comments count"
+        example: 10
+      comments:
+        type: "array"
+        description: "Comments list"
+        items:
+          $ref: "#/definitions/BlogComment"
+    
+  BlogComment:
+    type: "object"
+    properties:
+      comment:
+        type: "string"
+        description: "Comment text"
+        example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      author:
+        type: "string"
+        description: "Comment author"
+        example: "John Doe"
+      date:
+        type: "string"
+        description: "Comment publication date"
+        example: "2024-01-01 00:00:00"
+      comment_id:
+        type: "string"
+        description: "Comment ID (uuid)"
+        example: "1c4d0d0c-5b7a-4a4e-9f1a-5b1d1d0d0c1c"
+          

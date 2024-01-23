@@ -23,14 +23,26 @@ class UserSeeder extends Seeder
             ->count(50000)
             ->create(); */
 
-        $team = User::take(2)->get();
+        $team = User::take(3)->get();
 
-        $team->first()->role()->update([
+        $team->get(0)->role()->update([
             'role' => UserRoleEnum::ADMIN,
         ]);
 
-        $team->last()->role()->update([
+        $team->get(0)->update([
+            'email' => 'admin@dayz.com',
+        ]);
+
+        $team->get(1)->role()->update([
             'role' => UserRoleEnum::MODERATOR,
+        ]);
+
+        $team->get(1)->update([
+            'email' => 'mod@dayz.com',
+        ]);
+
+        $team->get(2)->update([
+            'email' => 'user@dayz.com',
         ]);
     }
 }

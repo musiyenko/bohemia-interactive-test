@@ -18,6 +18,7 @@ class BlogCommentResource extends JsonResource
             'comment' => $this->comment,
             'author' => $this->user->username,
             'date' => $this->created_at->format('Y-m-d H:i:s'),
+            'comment_id' => $this->id,
         ];
     }
 }
